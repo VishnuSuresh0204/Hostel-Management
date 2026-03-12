@@ -59,11 +59,12 @@ A premium Student Co-Living management platform built with Django and Bootstrap 
    python hostel/manage.py runserver
    ```
 
-## 🔒 Form Validations
-The project features a centralized validation architecture:
-- **Strong Auth**: Pattern-matched usernames and passwords.
-- **Date Constraints**: Dynamic min/max stay logic for residents vs guests.
-- **Payment Security**: Strict 16-digit card and MM/YY expiry validation.
+## 🛡️ Form Validation & Security
+The project features a comprehensive dual-layer validation architecture:
+- **Client-Side**: Centralized Bootstrap 5 logic for real-time feedback and premium UI interactions.
+- **Server-Side**: Robust Django backend guards to enforce data integrity for registrations, room pricing, and stay durations.
+- **Date Constraints**: Specialized logic to prevent overlapping leave requests and enforce student/guest booking limits.
+- **Payment Security**: Strict pattern-matching for card numbers and expiry dates.
 
 ## 📄 License
 This project is licensed under the MIT License.
