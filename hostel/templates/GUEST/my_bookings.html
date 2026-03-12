@@ -1,0 +1,60 @@
+{% extends 'GUEST/base.html' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block guest_content %}
+<h2>Guest Bookings</h2>
+{% if bookings %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Room</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>Payment</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.room.number }}</td>
+            <td>{{ booking.check_in }}</td>
+            <td>{{ booking.check_out }}</td>
+            <td>₹{{ booking.total_price }}</td>
+            <td>
+                {% if booking.status == 'PENDING' %}
+                <span class="badge bg-warning">Pending Approval</span>
+                {% elif booking.status == 'APPROVED' %}
+                <span class="badge bg-info">Approved</span>
+                {% elif booking.status == 'CONFIRMED' %}
+                <span class="badge bg-success">Confirmed</span>
+                {% else %}
+                <span class="badge bg-danger">Cancelled</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if booking.payment_status == 'PAID' %}
+                <span class="badge bg-success">Paid</span>
+                {% else %}
+                <span class="badge bg-warning">Unpaid</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if booking.status == 'APPROVED' and booking.payment_status == 'UNPAID' %}
+                <a href="/confirm_payment/?type=booking&id={{ booking.id }}" class="btn btn-sm btn-primary">Pay Now</a>
+                {% else %}
+                <span class="text-muted">-</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No bookings found.</p>
+<a href="/book_room/" class="btn btn-primary">Book a Room</a>
+{% endif %}
+{% endblock %}
