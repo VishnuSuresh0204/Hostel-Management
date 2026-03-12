@@ -1,0 +1,69 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block title %}Attendance Records{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid py-3">
+
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Attendance Register</h2>
+            <p class="text-muted mb-0">Records for <span class="text-dark fw-bold">{{ selected_date|date:"d F Y" }}</span></p>
+        </div>
+        
+        <!-- Date Picker Form -->
+        <form method="get" class="d-flex align-items-end bg-white p-2 rounded shadow-sm border needs-validation" novalidate>
+            <div class="me-2">
+                <label class="small text-muted d-block text-uppercase fw-bold" style="font-size: 0.7rem;">Select Date</label>
+                <input type="date" name="date" class="form-control form-control-sm border-0 bg-light" 
+                       value="{{ selected_date|date:'Y-m-d' }}" style="width: 150px;" required>
+                <div class="invalid-feedback" style="font-size: 0.6rem;">Select a date.</div>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary">
+                View
+            </button>
+        </form>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Resident Name</th>
+                            <th>Roll Number</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in attendance_data %}
+                        <tr>
+                            <td class="fw-semibold">{{ item.name }}</td>
+                            <td class="text-muted small">{{ item.roll|default:"--" }}</td>
+                            <td>
+                                {% if item.status == 'PRESENT' %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill">
+                                        <i class="fas fa-check me-1"></i> PRESENT
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2 rounded-pill">
+                                        <i class="fas fa-times me-1"></i> ABSENT
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5">
+                                <p class="text-muted mb-0">No residents found.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

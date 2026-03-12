@@ -1,0 +1,46 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block title %}Feedback{% endblock %}
+
+{% block admin_content %}
+<div class="container-fluid py-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">User Feedback</h2>
+    </div>
+
+    <div class="row g-3">
+        {% for fb in feedbacks %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+
+                        <h5 class="card-title mb-1">
+                            {{ fb.user.get_display_name }}
+                            <span class="badge bg-secondary ms-1">
+                                {{ fb.get_role_type_display }}
+                            </span>
+                        </h5>
+
+                        <p class="card-text text-muted mt-2">
+                            {{ fb.message }}
+                        </p>
+
+                        <small class="text-muted">
+                            {{ fb.date|date:"d M Y, h:i A" }}
+                        </small>
+
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    No feedback received.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

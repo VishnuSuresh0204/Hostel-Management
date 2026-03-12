@@ -1,0 +1,175 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block admin_content %}
+<div class="container-fluid py-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">Manage Rooms</h2>
+        <a href="/add_room/" class="btn btn-primary">
+            + Add New Room
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Capacity</th>
+                            <th>Occupants</th>
+                            <th>Price</th>
+                            <th>Rental Type</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for room in rooms %}
+                        <tr>
+                            <td class="fw-semibold">{{ room.number }}</td>
+
+                            <td>{{ room.capacity }}</td>
+
+                            <td>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#occupantsModal{{ room.id }}">
+                                    View {{ room.occupants_list|length }}
+                                </button>
+                            </td>
+
+                            <td class="fw-semibold">₹{{ room.price }}</td>
+
+                            <td>
+                                <span class="badge bg-info">
+                                    {{ room.get_rental_type_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if room.status == 'AVAILABLE' %}
+                                    <span class="badge bg-success">Available</span>
+                                {% elif room.status == 'OCCUPIED' %}
+                                    <span class="badge bg-warning text-dark">Occupied</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Maintenance</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+
+                                <!-- STATUS UPDATE -->
+                                <form method="POST"
+                                      action="/update_room_status/"
+                                      class="d-inline needs-validation" novalidate>
+                                    {% csrf_token %}
+                                    <input type="hidden" name="room_id" value="{{ room.id }}">
+
+                                    <select name="status"
+                                            class="form-select form-select-sm d-inline-block"
+                                            style="width:auto;"
+                                            required
+                                            aria-label="Update room status"
+                                            onchange="if(confirm('Change room status?')) this.form.submit(); else this.selectedIndex=this.defaultIndex;">
+
+                                        <option value="" disabled>Status</option>
+                                        <option value="AVAILABLE"
+                                            {% if room.status == 'AVAILABLE' %}selected{% endif %}>
+                                            Available
+                                        </option>
+
+                                        <option value="OCCUPIED"
+                                            {% if room.status == 'OCCUPIED' %}selected{% endif %}>
+                                            Occupied
+                                        </option>
+
+                                        <option value="MAINTENANCE"
+                                            {% if room.status == 'MAINTENANCE' %}selected{% endif %}>
+                                            Maintenance
+                                        </option>
+                                    </select>
+                                </form>
+
+                                <!-- EDIT / DELETE -->
+                                <div class="btn-group btn-group-sm ms-2">
+                                    <a href="/edit_room/{{ room.id }}/"
+                                       class="btn btn-outline-secondary">
+                                        Edit
+                                    </a>
+
+                                    <a href="/delete_room/{{ room.id }}/"
+                                       class="btn btn-outline-danger"
+                                       onclick="return confirm('Delete this room?');">
+                                        Delete
+                                    </a>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                No rooms found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block modals %}
+<!-- OCCUPANTS MODALS -->
+{% for room in rooms %}
+    {% if room.occupants_list %}
+    <div class="modal fade"
+         id="occupantsModal{{ room.id }}"
+         tabindex="-1"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Occupants in Room {{ room.number }}
+                    </h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <ul class="list-group">
+                        {% for occupant in room.occupants_list %}
+                            <li class="list-group-item">{{ occupant }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endfor %}
+{% endblock %}

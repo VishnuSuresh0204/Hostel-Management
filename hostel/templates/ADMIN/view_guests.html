@@ -1,0 +1,31 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block admin_content %}
+<h2>Manage Guests</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Identity Proof</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for guest in guests %}
+        <tr>
+            <td>{{ guest.name }}</td>
+            <td>{{ guest.email }}</td>
+            <td>{{ guest.phone }}</td>
+            <td>{{ guest.address }}</td>
+            <td>{{ guest.identity_proof }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No guests found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

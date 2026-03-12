@@ -1,0 +1,53 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block admin_content %}
+<h2>Manage Users (Residents)</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Roll Number</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
+            <td>{{ user.roll_number }}</td>
+            <td>
+                {% if user.login.is_blocked %}
+                <span class="badge bg-danger">Blocked</span>
+                {% else %}
+                <span class="badge bg-success">Active</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if user.login.is_blocked %}
+                <form method="POST" action="/unblock_user/" style="display:inline;" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ user.login.id }}">
+                    <button type="submit" class="btn btn-sm btn-success">Unblock</button>
+                </form>
+                {% else %}
+                <form method="POST" action="/block_user/" style="display:inline;" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ user.login.id }}">
+                    <button type="submit" class="btn btn-sm btn-danger">Block</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No users found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block admin_content %}
+<h2>Manage Fees</h2>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h4>Assign New Fee</h4>
+        <form method="POST" action="/add_fee/" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label>User</label>
+                    <select name="user_id" class="form-control" required>
+                        <option value="">Select User</option>
+                        {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }} ({{ user.user_type }})</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">Please select a user.</div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Fee Type</label>
+                    <select name="fee_type" class="form-control" required>
+                        <option value="ROOM">Room Fee</option>
+                        <option value="MESS">Mess Fee</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Amount</label>
+                    <input type="number" name="amount" class="form-control" step="0.01" required>
+                    <div class="invalid-feedback">Please enter the fee amount.</div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label>Due Date</label>
+                    <input type="date" name="due_date" class="form-control" required>
+                    <div class="invalid-feedback">Please select a due date.</div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign Fee</button>
+        </form>
+    </div>
+</div>
+
+<h4>All Fees</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Fee Type</th>
+            <th>Amount</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fee in fees %}
+        <tr>
+            <td>{{ fee.user.username }}</td>
+            <td>{{ fee.get_fee_type_display }}</td>
+            <td>₹{{ fee.amount }}</td>
+            <td>{{ fee.due_date }}</td>
+            <td>
+                {% if fee.status == 'PENDING' %}
+                <span class="badge bg-warning">Pending</span>
+                {% else %}
+                <span class="badge bg-success">Paid</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if fee.status == 'PENDING' %}
+                <form method="POST" action="/mark_fee_paid/" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="fee_id" value="{{ fee.id }}">
+                    <button type="submit" class="btn btn-sm btn-success">Mark Paid</button>
+                </form>
+                {% else %}
+                <span class="text-muted">Paid</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">No fees assigned.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

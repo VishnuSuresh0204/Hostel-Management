@@ -1,0 +1,109 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block admin_content %}
+<div class="container-fluid py-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0">All Bookings</h2>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <!-- <th>ID</th> -->
+                            <th>User</th>
+                            <th>Room</th>
+                            <th>Dates</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <!-- <td class="fw-semibold">#{{ booking.id }}</td> -->
+
+                            <!-- USER NAME FIX -->
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ booking.user.get_display_name }}
+                                </div>
+
+                                <small class="text-muted">
+                                    {{ booking.user.user_type|title }}
+                                </small>
+                            </td>
+
+                            <td>Room {{ booking.room.number }}</td>
+
+                            <td>
+                                <small>
+                                    {{ booking.check_in|date:"d M Y" }}<br>
+                                    <span class="text-muted">to</span><br>
+                                    {{ booking.check_out|date:"d M Y" }}
+                                </small>
+                            </td>
+
+                            <td class="fw-semibold">
+                                ₹{{ booking.total_price }}
+                            </td>
+
+                            <td>
+                                {% if booking.status == 'PENDING' %}
+                                    <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif booking.status == 'APPROVED' %}
+                                    <span class="badge bg-info text-dark">Approved (Unpaid)</span>
+                                {% elif booking.status == 'CONFIRMED' %}
+                                    <span class="badge bg-success">Confirmed</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Cancelled</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                {% if booking.status == 'PENDING' %}
+                <form method="POST" action="/approve_booking/" class="d-inline needs-validation" novalidate>
+{% csrf_token %}
+<input type="hidden" name="booking_id" value="{{ booking.id }}">
+<button type="submit" class="btn btn-sm btn-success">
+Approve
+</button>
+</form>
+
+                                    <form method="POST" action="/reject_booking/" class="d-inline ms-1 needs-validation" novalidate>
+                                        {% csrf_token %}
+                                        <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            Reject
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted">
+                                        {{ booking.get_status_display }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                No bookings found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

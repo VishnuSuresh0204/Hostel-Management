@@ -1,0 +1,117 @@
+{% extends 'ADMIN/base.html' %}
+
+{% block title %}Manage Mess Menu{% endblock %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Manage Mess Menu</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMenuModal">
+        <i class="fas fa-plus me-2"></i>Add / Update Menu
+    </button>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Day</th>
+                        <th>Breakfast</th>
+                        <th>Lunch</th>
+                        <th>Dinner</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu %}
+                    <tr>
+                        <td class="fw-bold text-primary">{{ item.get_day_of_week_display }}</td>
+                        <td>{{ item.breakfast }}</td>
+                        <td>{{ item.lunch }}</td>
+                        <td>{{ item.dinner }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" 
+                                onclick="editMenu('{{ item.day_of_week }}', '{{ item.breakfast }}', '{{ item.lunch }}', '{{ item.dinner }}')">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">No menu items found. Add one to get started!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Add/Update Menu Modal -->
+<div class="modal fade" id="addMenuModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Daily Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Day of Week</label>
+                        <select name="day_of_week" id="dayInput" class="form-select" required>
+                            <option value="" selected disabled>Select Day</option>
+                            <option value="MON">Monday</option>
+                            <option value="TUE">Tuesday</option>
+                            <option value="WED">Wednesday</option>
+                            <option value="THU">Thursday</option>
+                            <option value="FRI">Friday</option>
+                            <option value="SAT">Saturday</option>
+                            <option value="SUN">Sunday</option>
+                        </select>
+                        <small class="text-muted">Selecting an existing day will update it.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Breakfast</label>
+                        <input type="text" name="breakfast" id="breakfastInput" class="form-control" required placeholder="e.g. Idli, Sambar">
+                        <div class="invalid-feedback">Please provide the breakfast menu.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Lunch</label>
+                        <input type="text" name="lunch" id="lunchInput" class="form-control" required placeholder="e.g. Rice, Dal, Veggie">
+                        <div class="invalid-feedback">Please provide the lunch menu.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Dinner</label>
+                        <input type="text" name="dinner" id="dinnerInput" class="form-control" required placeholder="e.g. Chapati, Curry">
+                        <div class="invalid-feedback">Please provide the dinner menu.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save Menu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function editMenu(day, breakfast, lunch, dinner) {
+        document.getElementById('dayInput').value = day;
+        document.getElementById('breakfastInput').value = breakfast;
+        document.getElementById('lunchInput').value = lunch;
+        document.getElementById('dinnerInput').value = dinner;
+        
+        // Open modal
+        var myModal = new bootstrap.Modal(document.getElementById('addMenuModal'));
+        myModal.show();
+    }
+</script>
+{% endblock %}
