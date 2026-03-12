@@ -1,0 +1,25 @@
+{% extends 'USER/base.html' %}
+
+{% block user_content %}
+<h2>Upcoming Events</h2>
+<div class="row g-3">
+    {% for event in events %}
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ event.title }}</h5>
+                <p class="card-text">{{ event.description }}</p>
+                <hr>
+                <p class="mb-1"><strong>Date:</strong> {{ event.date }}</p>
+                <p class="mb-1"><strong>Time:</strong> {{ event.time }}</p>
+                <p class="mb-0"><strong>Venue:</strong> {{ event.venue }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <p>No upcoming events.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

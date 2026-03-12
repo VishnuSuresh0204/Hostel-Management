@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}Resident Portal | THE GREEN HOUSE{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* GLOBAL STYLES */
+        :root {
+            --primary: #1B4332;
+            --accent: #D4AF37;
+            --bg-mist: #F0F4F1;
+            --dark: #081C15;
+            --danger: #ae2012;
+            --light-gray: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-mist);
+            color: var(--dark);
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            padding: 12px 0;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--primary) !important;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            padding: 8px 16px !important;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--accent) !important;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-top: 3px solid var(--accent);
+        }
+
+        .dropdown-item {
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            color: var(--dark);
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-mist);
+            color: var(--primary);
+        }
+
+        .btn-nav-logout {
+            background: var(--danger);
+            color: white !important;
+            border-radius: 4px;
+            padding: 8px 20px !important;
+            font-weight: 600;
+            border: none;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        .btn-nav-logout:hover {
+            background: var(--dark);
+            color: var(--accent) !important;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            min-height: 35vh;
+            background:
+                linear-gradient(rgba(27, 67, 50, 0.8), rgba(27, 67, 50, 0.8)),
+                url('https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            color: white;
+            border-radius: 0 0 60px 0;
+            text-align: center;
+        }
+
+        /* MAIN CONTENT */
+        .content-container {
+            margin-top: -60px;
+            padding-bottom: 120px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+            border-bottom: 5px solid var(--accent);
+        }
+
+        /* PREMIUM FORM & TABLE STYLES (Copied from base.html) */
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            background-color: #f8faf9;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            background-color: white;
+            outline: none;
+        }
+
+        .btn-submit,
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover,
+        .btn-primary:hover {
+            background: var(--dark);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* TABLES */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table thead th {
+            border: none;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            padding: 15px;
+            background: transparent;
+        }
+
+        .table tbody tr {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s;
+        }
+
+        .table tbody tr:hover {
+            transform: translateY(-2px);
+        }
+
+        .table td {
+            border: none;
+            padding: 18px 15px;
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .table tbody tr td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .table tbody tr td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            padding: 60px 0;
+            color: white;
+        }
+
+        .footer-brand {
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="/user_home/">GREEN<span style="color:var(--accent)">HOUSE.</span>
+                <span style="font-size: 0.7em; opacity: 0.7; color: var(--primary);">| RESIDENT</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user_home/">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/book_room/">Book Room</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">My
+                            Stuff</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/my_bookings/">My Bookings</a></li>
+                            <li><a class="dropdown-item" href="/mark_attendance/">Mark Attendance</a></li>
+                            <li><a class="dropdown-item" href="/my_leave_requests/">Leave Requests</a></li>
+                            <li><a class="dropdown-item" href="/view_fees_user/">Fee Payments</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button"
+                            data-bs-toggle="dropdown">Community</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/view_mess_user/">Mess Menu</a></li>
+                            <li><a class="dropdown-item" href="/view_events_user/">Events</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="/user_add_feedback/">Feedback</a>
+                    </li> -->
+
+                    <li class="nav-item ms-3">
+                        <a href="/logout/" class="btn-nav-logout">LOGOUT</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="container">
+            <p class="text-uppercase fw-bold mb-2" style="letter-spacing:4px;color:var(--accent)">
+                {% block sub_title %}Welcome Home{% endblock %}
+            </p>
+            <h1 class="display-4 fw-bold">
+                {% block header_title %}Resident Dashboard{% endblock %}
+            </h1>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container content-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="main-card">
+                    {% block content %}
+                    {% block user_content %}
+                    {% endblock %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center">
+        <div class="container">
+            <h2 class="footer-brand mb-4">GREEN HOUSE.</h2>
+            <p class="small text-white-50 mb-0">© 2026 The Green House Co-Living. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+{% extends 'USER/base.html' %}
+
+{% block title %}Book a Room{% endblock %}
+
+{% block user_content %}
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Available Rooms</h2>
+    </div>
+
+    <div class="row g-4">
+        {% for room in rooms %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm border-0">
+
+                {% if room.image %}
+                <img src="{{ room.image.url }}" class="card-img-top"
+                     alt="Room {{ room.number }}" style="height:220px;object-fit:cover;">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center bg-light"
+                     style="height:220px;">
+                    <span class="text-muted">No Image Available</span>
+                </div>
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Room {{ room.number }}</h5>
+
+                    <p class="mb-2">
+                        <span class="badge bg-success">
+                            ₹{{ room.price }} / {{ room.get_rental_type_display }}
+                        </span>
+                    </p>
+
+                    <form action="/place_booking/" method="post" class="mt-auto needs-validation" novalidate id="bookingForm-{{ room.id }}">
+                        {% csrf_token %}
+                        <input type="hidden" name="room_id" value="{{ room.id }}">
+
+                        <div class="mb-2">
+                            <label class="form-label">Check In</label>
+                            <input type="date" name="check_in" class="form-control check-in" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Check Out</label>
+                            <input type="date" name="check_out" class="form-control check-out" required>
+                            <div class="invalid-feedback">
+                                Residents must book for at least 20 days.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            Book Now
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h5 class="text-muted">No rooms available at the moment.</h5>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+
+{% endblock %}

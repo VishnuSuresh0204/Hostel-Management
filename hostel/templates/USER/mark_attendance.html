@@ -1,0 +1,66 @@
+{% extends 'USER/base.html' %}
+
+{% block title %}Mark Attendance{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <!-- MARK ATTENDANCE CARD -->
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0 text-center">
+                <h4 class="fw-bold text-primary">Daily Attendance</h4>
+                <p class="text-muted small">{{ today|date:"l, d F Y" }}</p>
+            </div>
+            
+            <div class="card-body text-center p-5">
+                {% if msg %}
+                    <div class="alert alert-info">{{ msg }}</div>
+                {% endif %}
+
+                {% if is_marked %}
+                    <div class="mb-3">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5 class="fw-bold text-success mb-2">Present</h5>
+                    <p class="text-muted">Attendance marked for today.</p>
+                {% else %}
+                    <div class="mb-3">
+                        <i class="far fa-clock text-warning" style="font-size: 4rem;"></i>
+                    </div>
+                    <p class="mb-4">You currently haven't marked your attendance for today.</p>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-lg btn-success w-100 rounded-pill shadow-sm">
+                            Mark Present
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- HISTORY CARD -->
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white border-bottom-0 pt-4">
+                <h5 class="fw-bold mb-0">Recent History</h5>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for att in history %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <span class="fw-semibold">{{ att.date|date:"d M Y" }}</span>
+                            <span class="badge bg-success rounded-pill">Present</span>
+                        </li>
+                    {% empty %}
+                        <li class="list-group-item text-center text-muted py-4">
+                            No recent attendance records.
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

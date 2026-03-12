@@ -1,0 +1,44 @@
+{% extends 'USER/base.html' %}
+
+{% block title %}My Bookings{% endblock %}
+
+{% block user_content %}
+<h2>My Bookings</h2>
+{% if bookings %}
+<table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+    <thead>
+        <tr style="background: #eee;">
+            <th style="padding: 10px; text-align: left;">Room</th>
+            <th style="padding: 10px; text-align: left;">Check In</th>
+            <th style="padding: 10px; text-align: left;">Check Out</th>
+            <th style="padding: 10px; text-align: left;">Total Price</th>
+            <th style="padding: 10px; text-align: left;">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for booking in bookings %}
+        <tr style="border-bottom: 1px solid #ddd;">
+            <td style="padding: 10px;">{{ booking.room.number }}</td>
+            <td style="padding: 10px;">{{ booking.check_in }}</td>
+            <td style="padding: 10px;">{{ booking.check_out }}</td>
+            <td style="padding: 10px;">${{ booking.total_price }}</td>
+            <td style="padding: 10px;">
+                {% if booking.status == 'PENDING' %}
+                    <span class="badge bg-warning text-dark">Pending Approval</span>
+                {% elif booking.status == 'APPROVED' %}
+                    <span class="badge bg-info text-dark">Approved - Pay Now</span>
+                    <a href="/confirm_payment/?type=booking&id={{ booking.id }}" class="btn btn-sm btn-success mt-1">Make Payment</a>
+                {% elif booking.status == 'CONFIRMED' %}
+                    <span class="badge bg-success">Confirmed</span>
+                {% else %}
+                    <span class="badge bg-danger">Cancelled</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No bookings found.</p>
+{% endif %}
+{% endblock %}

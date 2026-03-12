@@ -1,0 +1,38 @@
+{% extends 'USER/base.html' %}
+
+{% block title %}Weekly Mess Menu{% endblock %}
+
+{% block user_content %}
+<h2>Weekly Mess Menu</h2>
+<div class="card">
+    <div class="card-content">
+        {% if menu %}
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Breakfast</th>
+                    <th>Lunch</th>
+                    <th>Dinner</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in menu %}
+                <tr>
+                    <td class="fw-bold text-primary">{{ item.get_day_of_week_display }}</td>
+                    <td>{{ item.breakfast }}</td>
+                    <td>{{ item.lunch }}</td>
+                    <td>{{ item.dinner }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info">
+            Menu has not been updated yet.
+        </div>
+        {% endif %}
+        <a href="/user_home/" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

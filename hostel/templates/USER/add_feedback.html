@@ -1,0 +1,45 @@
+{% extends 'USER/base.html' %}
+
+{% block title %}Add Feedback{% endblock %}
+
+{% block user_content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+
+        <h2 class="mb-4">Submit Feedback</h2>
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control"
+                          id="message"
+                          name="message"
+                          rows="5"
+                          minlength="5"
+                          required></textarea>
+                <div class="invalid-feedback">
+                    Please provide your feedback (at least 5 characters).
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                Submit Feedback
+            </button>
+
+            <a href="/user_home/" class="btn btn-secondary">
+                Cancel
+            </a>
+        </form>
+
+
+    </div>
+</div>
+{% endblock %}
