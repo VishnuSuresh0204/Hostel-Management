@@ -7,48 +7,60 @@ import datetime
 
 # Auth Views
 def register_resident(request):
-    msg = ""
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
-        
-        # Additional fields
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
-        roll_number = request.POST.get('roll_number')
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        email = request.POST.get('email', '').strip()
+        name = request.POST.get('name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        address = request.POST.get('address', '').strip()
+        roll_number = request.POST.get('roll_number', '').strip()
 
-        if not Login.objects.filter(username=username).exists():
-            user = Login.objects.create_user(username=username, email=email, password=password, user_type='user', view_password=password)
-            user.save()
-            Resident.objects.create(login=user, name=name, email=email, phone=phone, address=address, roll_number=roll_number)
-            return redirect('/login/')
-        else:
-            msg = "Username already exists"
-    return render(request, 'register_resident.html', {'msg': msg})
+        if not all([username, password, email, name, phone, address, roll_number]):
+            messages.error(request, "All fields are required.")
+            return render(request, 'register_resident.html')
+
+        if Login.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, 'register_resident.html')
+
+        if len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters long.")
+            return render(request, 'register_resident.html')
+
+        user = Login.objects.create_user(username=username, email=email, password=password, user_type='user', view_password=password)
+        Resident.objects.create(login=user, name=name, email=email, phone=phone, address=address, roll_number=roll_number)
+        messages.success(request, "Registration successful! Please login.")
+        return redirect('/login/')
+    return render(request, 'register_resident.html')
 
 def register_guest(request):
-    msg = ""
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
-        
-        # Additional fields
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        address = request.POST.get('address')
-        identity_proof = request.POST.get('identity_proof')
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        email = request.POST.get('email', '').strip()
+        name = request.POST.get('name', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        address = request.POST.get('address', '').strip()
+        identity_proof = request.POST.get('identity_proof', '').strip()
 
-        if not Login.objects.filter(username=username).exists():
-            user = Login.objects.create_user(username=username, email=email, password=password, user_type='guest', view_password=password)
-            user.save()
-            Guest.objects.create(login=user, name=name, email=email, phone=phone, address=address, identity_proof=identity_proof)
-            return redirect('/login/')
-        else:
-            msg = "Username already exists"
-    return render(request, 'register_guest.html', {'msg': msg})
+        if not all([username, password, email, name, phone, address, identity_proof]):
+            messages.error(request, "All fields are required.")
+            return render(request, 'register_guest.html')
+
+        if Login.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, 'register_guest.html')
+
+        if len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters long.")
+            return render(request, 'register_guest.html')
+
+        user = Login.objects.create_user(username=username, email=email, password=password, user_type='guest', view_password=password)
+        Guest.objects.create(login=user, name=name, email=email, phone=phone, address=address, identity_proof=identity_proof)
+        messages.success(request, "Registration successful! Please login.")
+        return redirect('/login/')
+    return render(request, 'register_guest.html')
 
 def login_view(request):
     msg = ""
@@ -134,11 +146,27 @@ def view_rooms(request):
 def add_room(request):
     if request.user.is_authenticated and request.user.user_type == 'admin':
         if request.method == 'POST':
-            number = request.POST.get('number')
-            capacity = request.POST.get('capacity')
-            price = request.POST.get('price')
+            number = request.POST.get('number', '').strip()
+            capacity = request.POST.get('capacity', '').strip()
+            price = request.POST.get('price', '').strip()
             rental_type = request.POST.get('rental_type')
             image = request.FILES.get('image')
+            
+            if not all([number, capacity, price, rental_type]):
+                messages.error(request, "All fields are required.")
+                return render(request, 'ADMIN/add_room.html')
+
+            try:
+                if int(capacity) <= 0 or float(price) <= 0:
+                    messages.error(request, "Capacity and Price must be positive values.")
+                    return render(request, 'ADMIN/add_room.html')
+            except ValueError:
+                messages.error(request, "Invalid numeric values for capacity or price.")
+                return render(request, 'ADMIN/add_room.html')
+
+            if Room.objects.filter(number=number).exists():
+                messages.error(request, f"Room {number} already exists.")
+                return render(request, 'ADMIN/add_room.html')
             
             Room.objects.create(
                 number=number,
@@ -148,6 +176,7 @@ def add_room(request):
                 image=image,
                 status='AVAILABLE'
             )
+            messages.success(request, f"Room {number} added successfully.")
             return redirect('/view_rooms/')
         return render(request, 'ADMIN/add_room.html')
     return redirect('/login/')
@@ -157,15 +186,38 @@ def edit_room(request, id):
         try:
             room = Room.objects.get(id=id)
             if request.method == 'POST':
-                room.number = request.POST.get('number')
-                room.capacity = request.POST.get('capacity')
-                room.price = request.POST.get('price')
-                room.rental_type = request.POST.get('rental_type')
+                number = request.POST.get('number', '').strip()
+                capacity = request.POST.get('capacity', '').strip()
+                price = request.POST.get('price', '').strip()
+                rental_type = request.POST.get('rental_type')
+                
+                if not all([number, capacity, price, rental_type]):
+                    messages.error(request, "All fields are required.")
+                    return render(request, 'ADMIN/edit_room.html', {'room': room})
+
+                try:
+                    if int(capacity) <= 0 or float(price) <= 0:
+                        messages.error(request, "Capacity and Price must be positive values.")
+                        return render(request, 'ADMIN/edit_room.html', {'room': room})
+                except ValueError:
+                    messages.error(request, "Invalid numeric values for capacity or price.")
+                    return render(request, 'ADMIN/edit_room.html', {'room': room})
+
+                # Check if number changed and if new number exists
+                if room.number != number and Room.objects.filter(number=number).exists():
+                    messages.error(request, f"Room {number} already exists.")
+                    return render(request, 'ADMIN/edit_room.html', {'room': room})
+
+                room.number = number
+                room.capacity = capacity
+                room.price = price
+                room.rental_type = rental_type
                 
                 if request.FILES.get('image'):
                     room.image = request.FILES.get('image')
                 
                 room.save()
+                messages.success(request, f"Room {number} updated successfully.")
                 return redirect('/view_rooms/')
             return render(request, 'ADMIN/edit_room.html', {'room': room})
         except Room.DoesNotExist:
@@ -186,10 +238,14 @@ def manage_mess(request):
     if request.user.is_authenticated and request.user.user_type == 'admin':
         if request.method == 'POST':
             day_of_week = request.POST.get('day_of_week')
-            breakfast = request.POST.get('breakfast')
-            lunch = request.POST.get('lunch')
-            dinner = request.POST.get('dinner')
+            breakfast = request.POST.get('breakfast', '').strip()
+            lunch = request.POST.get('lunch', '').strip()
+            dinner = request.POST.get('dinner', '').strip()
             
+            if not all([day_of_week, breakfast, lunch, dinner]):
+                messages.error(request, "All menu fields are required.")
+                return redirect('/manage_mess/')
+
             MessMenu.objects.update_or_create(
                 day_of_week=day_of_week,
                 defaults={
@@ -198,6 +254,7 @@ def manage_mess(request):
                     'dinner': dinner
                 }
             )
+            messages.success(request, f"Menu for {day_of_week} updated.")
             return redirect('/manage_mess/')
 
         menu = MessMenu.objects.all()
@@ -369,12 +426,27 @@ def view_guests(request):
 def manage_events(request):
     if request.user.is_authenticated and request.user.user_type == 'admin':
         if request.method == 'POST':
-            title = request.POST.get('title')
-            description = request.POST.get('description')
+            title = request.POST.get('title', '').strip()
+            description = request.POST.get('description', '').strip()
             date = request.POST.get('date')
             time = request.POST.get('time')
-            venue = request.POST.get('venue')
+            venue = request.POST.get('venue', '').strip()
+            
+            if not all([title, description, date, time, venue]):
+                messages.error(request, "All event fields are required.")
+                return redirect('/manage_events/')
+
+            try:
+                event_date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+                if event_date < datetime.date.today():
+                    messages.error(request, "Event date cannot be in the past.")
+                    return redirect('/manage_events/')
+            except ValueError:
+                messages.error(request, "Invalid date format.")
+                return redirect('/manage_events/')
+
             Event.objects.create(title=title, description=description, date=date, time=time, venue=venue)
+            messages.success(request, f"Event '{title}' created successfully.")
             return redirect('/manage_events/')
         events = Event.objects.all().order_by('-date')
         return render(request, 'ADMIN/manage_events.html', {'events': events})
@@ -425,11 +497,29 @@ def add_fee(request):
     if request.user.is_authenticated and request.user.user_type == 'admin':
         if request.method == 'POST':
             user_id = request.POST.get('user_id')
-            amount = request.POST.get('amount')
+            amount = request.POST.get('amount', '').strip()
             fee_type = request.POST.get('fee_type')
             due_date = request.POST.get('due_date')
-            user = Login.objects.get(id=user_id)
-            Fee.objects.create(user=user, amount=amount, fee_type=fee_type, due_date=due_date)
+            
+            if not all([user_id, amount, fee_type, due_date]):
+                messages.error(request, "All fields are required.")
+                return redirect('/manage_fees/')
+
+            try:
+                if float(amount) <= 0:
+                    messages.error(request, "Amount must be positive.")
+                    return redirect('/manage_fees/')
+            except ValueError:
+                messages.error(request, "Invalid amount.")
+                return redirect('/manage_fees/')
+
+            try:
+                user = Login.objects.get(id=user_id)
+                Fee.objects.create(user=user, amount=amount, fee_type=fee_type, due_date=due_date)
+                messages.success(request, f"Fee assigned to {user.username}.")
+            except Login.DoesNotExist:
+                messages.error(request, "Selected user not found.")
+            
             return redirect('/manage_fees/')
     return redirect('/login/')
 
@@ -663,10 +753,46 @@ def leave_request(request):
     resident = Resident.objects.get(id=request.session['resident_id'])
     
     if request.method == 'POST':
-        reason = request.POST.get('reason')
+        reason = request.POST.get('reason', '').strip()
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
+        
+        if not all([reason, start_date, end_date]):
+            messages.error(request, "All fields are required.")
+            return render(request, 'USER/leave_request.html')
+
+        try:
+            d1 = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+            d2 = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+            
+            if d2 < d1:
+                messages.error(request, "End date cannot be before start date.")
+                return render(request, 'USER/leave_request.html')
+            
+            if d1 < datetime.date.today():
+                messages.error(request, "Start date cannot be in the past.")
+                return render(request, 'USER/leave_request.html')
+
+            # Overlap check
+            overlap = LeaveRequest.objects.filter(
+                resident=resident,
+                status__in=['PENDING', 'APPROVED']
+            ).filter(
+                Q(start_date__range=(d1, d2)) | 
+                Q(end_date__range=(d1, d2)) |
+                Q(start_date__lte=d1, end_date__gte=d2)
+            ).exists()
+
+            if overlap:
+                messages.error(request, "You already have a leave request covering this period.")
+                return render(request, 'USER/leave_request.html')
+
+        except ValueError:
+            messages.error(request, "Invalid date format.")
+            return render(request, 'USER/leave_request.html')
+
         LeaveRequest.objects.create(resident=resident, reason=reason, start_date=start_date, end_date=end_date)
+        messages.success(request, "Leave request submitted for approval.")
         return redirect('/my_leave_requests/')
     
     return render(request, 'USER/leave_request.html')
