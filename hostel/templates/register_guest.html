@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block title %}Guest Registration | Green House{% endblock %}
+
+{% block header_title %}Join the Community{% endblock %}
+{% block sub_title %}Start your journey with us{% endblock %}
+
+{% block extra_css %}
+
+<style>
+    .reg-card {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+        background-color: #f9fbf9;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+        background-color: white;
+    }
+
+    .error-msg {
+        background: #fff5f5;
+        color: #c0392b;
+        padding: 10px;
+        border-radius: 8px;
+        border-left: 4px solid #c0392b;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    .btn-register {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: 0.3s;
+        margin-top: 20px;
+    }
+
+    .btn-register:hover {
+        background: var(--dark);
+        color: var(--accent);
+        transform: translateY(-2px);
+    }
+
+    .invalid-feedback{
+        font-size:0.8rem;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="reg-card">
+
+
+<div class="text-center mb-5">
+    <h2 class="serif display-6">Create Your Account</h2>
+    <p class="text-muted">Register as a guest to explore and book your space.</p>
+</div>
+
+{% if msg %}
+<div class="error-msg text-center">
+    <i class="fas fa-exclamation-circle me-2"></i> {{ msg }}
+</div>
+{% endif %}
+
+
+<form method="post" class="row g-4 needs-validation" novalidate>
+{% csrf_token %}
+
+<div class="col-md-6">
+<label class="form-label">Username</label>
+<input
+type="text"
+name="username"
+class="form-control"
+placeholder="Choose a handle"
+minlength="4"
+maxlength="20"
+pattern="^[a-zA-Z0-9_]+$"
+title="Only letters, numbers and underscore allowed"
+required
+>
+<div class="invalid-feedback">
+Username must be 4–20 characters and contain only letters, numbers or underscore.
+</div>
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Email Address</label>
+<input
+type="email"
+name="email"
+class="form-control"
+placeholder="name@college.edu"
+required
+>
+<div class="invalid-feedback">
+Please enter a valid email address.
+</div>
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Password</label>
+<input
+type="password"
+name="password"
+class="form-control"
+minlength="8"
+pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{8,}"
+title="Password must include uppercase, lowercase and number"
+placeholder="••••••••"
+required
+>
+<div class="invalid-feedback">
+Password must contain at least 8 characters including uppercase, lowercase and number.
+</div>
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Full Name</label>
+<input
+type="text"
+name="name"
+class="form-control"
+pattern="^[A-Za-z ]+$"
+title="Only alphabets allowed"
+placeholder="As per ID"
+required
+>
+<div class="invalid-feedback">
+Name should contain only letters.
+</div>
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Phone Number</label>
+<input
+type="tel"
+name="phone"
+class="form-control"
+pattern="^[6-9]\d{9}$"
+maxlength="10"
+placeholder="9876543210"
+title="Enter a valid 10 digit phone number"
+required
+>
+<div class="invalid-feedback">
+Enter a valid 10 digit phone number.
+</div>
+</div>
+
+<div class="col-md-6">
+<label class="form-label">Aadhar / ID Number</label>
+<input
+type="text"
+name="identity_proof"
+class="form-control"
+pattern="^\d{12}$"
+maxlength="12"
+placeholder="12 digit Aadhaar number"
+title="Enter a valid 12 digit Aadhaar number"
+required
+>
+<div class="invalid-feedback">
+Please enter a valid 12 digit Aadhaar number.
+</div>
+</div>
+
+<div class="col-12">
+<label class="form-label">Permanent Address</label>
+<textarea
+name="address"
+class="form-control"
+rows="3"
+minlength="10"
+placeholder="Enter your full home address"
+required
+></textarea>
+<div class="invalid-feedback">
+Address must be at least 10 characters long.
+</div>
+</div>
+
+<div class="col-12 text-center">
+<button type="submit" class="btn-register w-100">
+Complete Registration
+</button>
+
+<p class="mt-4 small text-muted">
+Already have an account?
+<a href="/login" class="text-primary fw-bold">Login here</a>
+</p>
+
+</div>
+
+</form>
+
+</div>
+
+
+{% endblock %}

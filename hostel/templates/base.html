@@ -1,0 +1,359 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}THE GREEN HOUSE | Premium Student Co-Living Kerala{% endblock %}</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* GLOBAL STYLES */
+        :root {
+            --primary: #1B4332;
+            --accent: #D4AF37;
+            --bg-mist: #F0F4F1;
+            --dark: #081C15;
+            --danger: #ae2012;
+            --light-gray: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-mist);
+            color: var(--dark);
+        }
+
+        h1,
+        h2,
+        h3,
+        .serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--primary);
+            padding: 12px 0;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark) !important;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .btn-nav {
+            background: var(--primary);
+            color: white;
+            border-radius: 4px;
+            padding: 10px 25px;
+            font-weight: 600;
+            border: none;
+            transition: 0.3s;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        .btn-nav:hover {
+            background: var(--accent);
+            color: var(--dark);
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            min-height: 45vh;
+            background:
+                linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)),
+                url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            color: white;
+            border-radius: 0 0 60px 0;
+            text-align: center;
+        }
+
+        /* INFO STRIP */
+        .info-strip {
+            background: white;
+            padding: 40px 0;
+        }
+
+        .info-box {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* MAIN CONTENT */
+        .content-container {
+            margin-top: -60px;
+            padding-bottom: 120px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+            border-bottom: 5px solid var(--accent);
+        }
+
+        /* PREMIUM FORM STYLES */
+        .form-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid var(--light-gray);
+            border-radius: 6px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            background-color: #f8faf9;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+            background-color: white;
+            outline: none;
+        }
+
+        .btn-submit,
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .btn-submit:hover,
+        .btn-primary:hover {
+            background: var(--dark);
+            color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ALERTS */
+        .alert-error,
+        .alert-danger {
+            background: #fff5f5;
+            color: var(--danger);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--danger);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            color: var(--primary);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        /* PREMIUM TABLES */
+        .table {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table thead th {
+            border: none;
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            padding: 15px;
+            background: transparent;
+        }
+
+        .table tbody tr {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s;
+        }
+
+        .table tbody tr:hover {
+            transform: translateY(-2px);
+        }
+
+        .table td {
+            border: none;
+            padding: 20px 15px;
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .table tbody tr td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .table tbody tr td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            padding: 80px 0;
+            color: white;
+        }
+
+        .footer-brand {
+            color: var(--accent);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
+
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/">GREEN<span style="color:var(--accent)">HOUSE.</span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+
+                <div class="ms-auto d-flex gap-2">
+                    <a href="/" class="btn-nav"
+                        style="background:transparent;color:var(--primary);border:1px solid var(--primary)">HOME</a>
+                    <a href="/user_register" class="btn-nav"
+                        style="background:transparent;color:var(--primary);border:1px solid var(--primary)">USER</a>
+                    <a href="/guest_register" class="btn-nav"
+                        style="background:transparent;color:var(--primary);border:1px solid var(--primary)">GUEST</a>
+                    <a href="/login" class="btn-nav"
+                        style="background:transparent;color:var(--primary);border:1px solid var(--primary)">LOGIN</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="container">
+            <p class="text-uppercase fw-bold mb-2" style="letter-spacing:4px;color:var(--accent)">
+                {% block sub_title %}Elite Student Co-Living{% endblock %}
+            </p>
+            <h1 class="display-3 fw-bold">
+                {% block header_title %}The Member Portal{% endblock %}
+            </h1>
+        </div>
+    </header>
+
+    <!-- INFO STRIP (OPTIONAL GLOBAL CONTENT) -->
+    <section class="info-strip">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4 info-box">
+                    <i class="fas fa-shield-alt fa-2x mb-2 text-success"></i>
+                    <h6 class="fw-bold">Safe & Secure</h6>
+                    <p class="small text-muted mb-0">24/7 monitored residences</p>
+                </div>
+                <div class="col-md-4 info-box">
+                    <i class="fas fa-home fa-2x mb-2 text-success"></i>
+                    <h6 class="fw-bold">Premium Living</h6>
+                    <p class="small text-muted mb-0">Designed for comfort & focus</p>
+                </div>
+                <div class="col-md-4 info-box">
+                    <i class="fas fa-map-marker-alt fa-2x mb-2 text-success"></i>
+                    <h6 class="fw-bold">Prime Locations</h6>
+                    <p class="small text-muted mb-0">Across Kerala’s education hubs</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main class="container content-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="main-card">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="text-center">
+        <div class="container">
+            <h2 class="footer-brand mb-4">GREEN HOUSE.</h2>
+            <p class="text-white-50 mb-4">Premium Student Living Network Across Kerala</p>
+
+            <div class="d-flex justify-content-center gap-4 mb-5">
+                <a href="#" class="text-white-50"><i class="fab fa-instagram fa-lg"></i></a>
+                <a href="#" class="text-white-50"><i class="fab fa-whatsapp fa-lg"></i></a>
+            </div>
+
+            <hr class="opacity-25">
+            <p class="small text-white-50 mb-0">© 2026 The Green House Co-Living. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            'use strict'
+            const forms = document.querySelectorAll('.needs-validation')
+            Array.from(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })()
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>
